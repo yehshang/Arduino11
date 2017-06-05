@@ -1,0 +1,86 @@
+#include <MsTimer2.h>
+#include <LiquidCrystal.h>
+
+char b[7];
+int i=0;
+LiquidCrystal lcd(12,11, 5, 4, 3, 2); 
+ 
+void setup() {
+  lcd.begin(16, 2);
+  lcd.setCursor(0, 0);
+  Serial.begin(9600);
+  pinMode(13,OUTPUT);
+  MsTimer2::set(1000,CountDown);
+}
+void loop() {
+  while(Serial.available())
+  {
+    b[i]=Serial.read();
+    i=i+1;
+    MsTimer2::start();
+  }
+  //Serial.println(sec);
+}
+void CountDown()
+{
+  lcd.setCursor(0, 1);
+  --b[5];
+  if(b[0]=='0' && b[1]=='0' && b[2]=='0' && b[3]=='0'&& b[4]=='0' && b[5]=='0')
+  {
+    MsTimer2::stop();
+    digitalWrite(13,HIGH);
+  }
+
+  if(b[0]=='0' && b[1]=='0' && b[2]=='0' && b[3]=='0'&& b[4]=='0' && b[5]=='/')
+  {
+    b[0]='2';
+    b[1]='3';
+    b[2]='5';
+    b[3]='9';
+    b[4]='5';
+    b[5]='9';
+  }
+  if(b[1]=='0' && b[2]=='0' && b[3]=='0'&& b[4]=='0' && b[5]=='/')
+  {
+     b[1]='3';
+    b[2]='5';
+    b[3]='9';
+    b[4]='5';
+    b[5]='9';
+    --b[0];
+  }
+   if(b[2]=='0' && b[3]=='0'&& b[4]=='0' && b[5]=='/')
+  {
+    b[2]='5';
+    b[3]='9';
+    b[4]='5';
+    b[5]='9';
+    --b[1];
+  }
+   if(b[3]=='0'&& b[4]=='0' && b[5]=='/')
+  {
+    b[3]='9';
+    b[4]='5';
+    b[5]='9';
+    --b[2];
+  }
+     if( b[4]=='0' && b[5]=='/')
+  {
+    b[4]='5';
+    b[5]='9';
+    --b[3];
+  }
+    if( b[5]=='/')
+  {
+    b[5]='9';
+    --b[4];
+  }
+  lcd.write(b[0]);
+  lcd.write(b[1]);
+  lcd.write(':');
+  lcd.write(b[2]);
+  lcd.write(b[3]);
+  lcd.write(':');
+  lcd.write(b[4]);
+  lcd.write(b[5]);
+}
